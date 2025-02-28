@@ -376,3 +376,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,python,pycharm,windows,visualstudiocode
 nlp_test/absa_model.pth
+".env" 
