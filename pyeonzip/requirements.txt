@@ -1,0 +1,8 @@
+fastapi[all]
+transformers
+torch
+torchvision
+torchaudio
+safetensors
+pydantic
+python-multipart
