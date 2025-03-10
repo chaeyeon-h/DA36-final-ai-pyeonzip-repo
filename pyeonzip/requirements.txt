@@ -6,3 +6,5 @@ torchaudio
 safetensors
 pydantic
 python-multipart
+sentence-transformers
+keybert

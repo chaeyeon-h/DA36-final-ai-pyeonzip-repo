@@ -1,8 +1,13 @@
+from typing import List, Tuple
+
 from fastapi import FastAPI
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from inference import analyze_text
 import logging
+
+from schemas import SentimentRequest, KeywordRequest, KeywordResponse
+from sentiment_inference import analyze_text
+from keyword_inference import extract_keywords
+
 app = FastAPI()
 
 # ✅ CORS 설정 추가 (모든 도메인 허용)
@@ -16,23 +21,34 @@ app.add_middleware(
 
 logging.basicConfig(level=logging.INFO)
 
-# 감성 분석 모델
-class ReviewRequest(BaseModel):
-    text: str
 
 @app.post("/analyze/")
-def analyze_review(review: ReviewRequest):
+def analyze_review(review: SentimentRequest):
     """
     FastAPI 감성 분석 엔드포인트
     """
-    logging.info(f"Received request: {review.text}")
+    logging.info(f"🔹 Received Sentiment request: {review.text}")
     result = analyze_text(review.text)
+    logging.info(f"Response: {result}")
+    return result
+
+
+@app.post("/extract_keywords_hf/", response_model=KeywordResponse)
+def extract_keywords_hf_api(request: KeywordRequest):
+    """
+    Hugging Face Inference API 기반 키워드 추출 엔드포인트
+    """
+    logging.info(f"🔹 Hugging Face API request: {request.review}")
+    result = extract_keywords(request)
     logging.info(f"Response: {result}")
     return result
 
 @app.get("/")
 def root():
     logging.info("[FASTAPI ALIVE] 서버 정상 작동 중")
-    return {"message": "FastAPI Sentiment Analysis is Running!"}
+    return {"message": "FastAPI Server is Running!"}
+
+
+
 
 

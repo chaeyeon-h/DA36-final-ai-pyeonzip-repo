@@ -1,26 +1,26 @@
 import torch
 import torch.nn.functional as F
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+from transformers import pipeline, AutoTokenizer,  BertForSequenceClassification
 
 import logging
 
 # ✅ 실행 환경 설정 (CUDA 사용 가능 여부 확인)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# 모델 및 토크나이저 경로
-MODEL_PATH = "/pyeonzip/models/"
-TOKENIZER_PATH = "/pyeonzip/tokenizers/"
+# # 모델 및 토크나이저 경로
+# MODEL_PATH = "/pyeonzip/models/"
+# TOKENIZER_PATH = "/pyeonzip/tokenizers/"
 
-# import os
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# TOKENIZER_PATH = os.path.join(BASE_DIR, "tokenizers")
-# MODEL_PATH = os.path.join(BASE_DIR, "models")
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TOKENIZER_PATH = os.path.join(BASE_DIR, "tokenizers")
+MODEL_PATH = os.path.join(BASE_DIR, "models")
 
 # ✅ 학습된 토크나이저 로드
 tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
 
 # ✅ 감성 분석 모델 로드 (`model.safetensors` 사용)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=3)
+model =  BertForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=3)
 model.resize_token_embeddings(len(tokenizer))
 
 # ✅ 모델을 GPU로 이동 & 평가 모드로 설정
@@ -38,7 +38,6 @@ def analyze_text(text: str):
     logging.info(f"Processing text: {text}")
     # ✅ 입력 데이터를 토큰화
     inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
-
 
     # ✅ 데이터를 GPU로 이동
     inputs = {key: val.to(device) for key, val in inputs.items()}
