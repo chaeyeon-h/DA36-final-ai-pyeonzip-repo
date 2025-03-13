@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from schemas import SentimentRequest, KeywordRequest, KeywordResponse
-from sentiment_inference import analyze_text
+from sentiment_inference import analyze_taste, analyze_cost
 from keyword_inference import extract_keywords
 
 app = FastAPI()
@@ -22,14 +22,24 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 
 
-@app.post("/analyze/")
-def analyze_review(review: SentimentRequest):
+@app.post("/analyze_taste/")
+def analyze_review(request: SentimentRequest):
     """
-    FastAPI 감성 분석 엔드포인트
+    FastAPI 맛 감성 분석 엔드포인트
     """
-    logging.info(f"🔹 Received Sentiment request: {review.text}")
-    result = analyze_text(review.text)
-    logging.info(f"Response: {result}")
+    logging.info(f"🔹 Received Sentiment request: {request.text}")
+    result = analyze_taste(request)
+    logging.info(f"🔹 Response: {result}")
+    return result
+
+@app.post("/analyze_cost/")
+def analyze_review(request: SentimentRequest):
+    """
+    FastAPI 가겨 감성 분석 엔드포인트
+    """
+    logging.info(f"🔹 Received Sentiment request: {request.text}")
+    result = analyze_cost(request)
+    logging.info(f"🔹 Response: {result}")
     return result
 
 
